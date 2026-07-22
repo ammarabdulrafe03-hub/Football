@@ -1,502 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- SEO Meta Tags -->
-  <title>Live Football Match Tracker & Scores | Track Your Favorite Team</title>
-  <meta name="description" content="Track recent football match results, live scores, team badges, and venue details for premier clubs worldwide like Arsenal, Real Madrid, and more.">
-  <meta name="keywords" content="football tracker, soccer scores, real madrid last match, arsenal scores, live sports results, football fixtures">
-  <meta name="author" content="Football Match Tracker">
-
-  <!-- Open Graph Tags for Social Media Sharing (WhatsApp, Twitter/X, Discord) -->
-  <meta property="og:title" content="Football Match Tracker - Fast Live Results">
-  <meta property="og:description" content="Check recent scores, fixtures, badges, and venues for any football team instantly.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=Football+Match+Tracker">
-
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Match Tracker</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #0b132b;
-      color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .tracker-card {
-      background: #1c2541;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-      width: 380px;
-    }
-
-    /* Auth Header Styling */
-    .auth-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 12px;
-      font-size: 12px;
-      gap: 8px;
-    }
-
-    .auth-btn {
-      padding: 6px 12px;
-      font-size: 12px;
-      background: #3a506b;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .auth-btn:hover {
-      background: #48cae4;
-      color: #0b132b;
-    }
-
-    .auth-btn.logout {
-      background: #ff4d4d;
-    }
-
-    .auth-btn.logout:hover {
-      background: #ff6666;
-      color: white;
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 20px;
-      text-align: center;
-    }
-
-    .search-box {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #3a506b;
-      border-radius: 6px;
-      background: #0b132b;
-      color: white;
-      outline: none;
-    }
-
-    button {
-      padding: 10px 16px;
-      background: #48cae4;
-      border: none;
-      border-radius: 6px;
-      color: #0b132b;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #90e0ef;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .error {
-      color: #ff4d4d;
-      font-size: 14px;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .league-tag {
-      text-align: center;
-      font-weight: bold;
-      color: #48cae4;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 15px;
-    }
-
-    .scoreboard {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #0b132b;
-      padding: 16px;
-      border-radius: 8px;
-    }
-
-    .team {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 90px;
-      text-align: center;
-      font-size: 13px;
-    }
-
-    .badge {
-      width: 45px;
-      height: 45px;
-      object-fit: contain;
-      margin-bottom: 6px;
-    }
-
-    .score-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .score {
-      font-size: 28px;
-      font-weight: bold;
-      color: #ffffff;
-    }
-
-    .status {
-      font-size: 10px;
-      background: #3a506b;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-top: 4px;
-    }
-
-    .match-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid #3a506b;
-      font-size: 12px;
-      color: #cbd5e1;
-    }
-
-    /* Modal Overlay */
-    .modal {
-      position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%; 
-      height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #1c2541;
-      padding: 24px;
-      border-radius: 10px;
-      width: 300px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-    }
-
-    .modal-content h3 {
-      margin: 0 0 8px 0;
-      text-align: center;
-    }
-
-    .close {
-      position: absolute;
-      top: 10px; 
-      right: 15px;
-      font-size: 20px;
-      cursor: pointer;
-      color: #cbd5e1;
-    }
-
-    .toggle-text {
-      font-size: 12px;
-      text-align: center;
-      color: #48cae4;
-      cursor: pointer;
-      margin: 0;
-    }
+    body { font-family: system-ui, sans-serif; background: #0b132b; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { background: #1c2541; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,.4); width: 340px; text-align: center; }
+    .hidden { display: none !important; }
+    input, button { width: 100%; padding: 10px; margin-top: 8px; border-radius: 6px; border: 1px solid #3a506b; box-sizing: border-box; }
+    input { background: #0b132b; color: #fff; outline: none; }
+    button { background: #48cae4; border: none; font-weight: bold; cursor: pointer; color: #0b132b; }
+    button:hover { background: #90e0ef; }
+    .btn-alt { background: transparent; color: #cbd5e1; border: none; font-size: 12px; }
+    .error { color: #ff4d4d; font-size: 13px; margin-top: 8px; }
+    .flex-row { display: flex; gap: 8px; }
+    .scoreboard { display: flex; justify-content: space-between; align-items: center; background: #0b132b; padding: 12px; border-radius: 8px; margin-top: 12px; }
+    .team { display: flex; flex-direction: column; align-items: center; width: 80px; font-size: 12px; }
+    .badge { width: 40px; height: 40px; object-fit: contain; }
+    .score { font-size: 24px; font-weight: bold; }
+    .meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: #cbd5e1; border-top: 1px solid #3a506b; padding-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="tracker-card">
-    <!-- Auth Bar Header -->
-    <div class="auth-bar">
-      <div id="loggedOutState">
-        <button id="openAuthBtn" class="auth-btn">Sign In / Register</button>
-      </div>
-      <div id="loggedInState" class="hidden">
-        <span id="userEmailDisplay"></span>
-        <button id="logoutBtn" class="auth-btn logout">Logout</button>
-      </div>
-    </div>
+  <!-- PAGE 1: AUTHENTICATION -->
+  <div id="authPage" class="card">
+    <h2 id="authTitle">Sign In</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="pass" placeholder="Password">
+    <button id="authBtn">Sign In</button>
+    <button id="toggleAuth" class="btn-alt">Need an account? Register</button>
+    <button id="guestBtn" class="btn-alt" style="margin-top:10px; color:#48cae4;">Skip as Guest →</button>
+    <div id="authErr" class="error hidden"></div>
+  </div>
 
-    <h1>⚽ Football Match Tracker</h1>
+  <!-- PAGE 2: TRACKER APP -->
+  <div id="trackerPage" class="card hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span id="userDisp" style="font-size:11px; color:#cbd5e1;">Guest</span>
+      <button id="logoutBtn" style="width:auto; padding:4px 8px; font-size:11px; background:#ff4d4d; color:#fff;">Logout</button>
+    </div>
+    <h2 style="margin:0 0 12px;">⚽ Match Tracker</h2>
     
-    <!-- Input Section -->
-    <div class="search-box">
-      <input type="text" id="teamInput" placeholder="Enter team (e.g. Arsenal, Real Madrid)" value="Arsenal">
-      <button id="searchBtn">Search</button>
+    <div class="flex-row">
+      <input type="text" id="teamInput" value="Arsenal" style="margin:0;">
+      <button id="searchBtn" style="width: auto;">Search</button>
     </div>
 
-    <!-- UI State Messages -->
-    <div id="loader" class="hidden" style="text-align: center; margin-bottom: 12px;">Searching matches...</div>
-    <div id="errorMsg" class="hidden error"></div>
+    <div id="loader" class="hidden" style="margin-top:10px;">Searching...</div>
+    <div id="trackErr" class="error hidden"></div>
 
-    <!-- Scoreboard Display -->
-    <div id="matchDisplay" class="match-details hidden">
-      <div class="league-tag" id="leagueName">League</div>
-      
+    <div id="matchDisplay" class="hidden">
+      <div id="league" style="color:#48cae4; font-size:11px; font-weight:bold; margin-top:12px;">LEAGUE</div>
       <div class="scoreboard">
-        <div class="team home">
-          <img id="homeBadge" src="" alt="Home Team Badge" class="badge">
-          <span id="homeName">Home Team</span>
-        </div>
-
-        <div class="score-box">
-          <span id="score" class="score">0 - 0</span>
-          <span id="matchStatus" class="status">FINISHED</span>
-        </div>
-
-        <div class="team away">
-          <img id="awayBadge" src="" alt="Away Team Badge" class="badge">
-          <span id="awayName">Away Team</span>
-        </div>
+        <div class="team"><img id="hBadge" class="badge"> <span id="hName">Home</span></div>
+        <div style="text-align:center;"><div id="score" class="score">0 - 0</div><span id="status" style="font-size:9px; background:#3a506b; padding:2px 4px; border-radius:3px;">FINISHED</span></div>
+        <div class="team"><img id="aBadge" class="badge"> <span id="aName">Away</span></div>
       </div>
-
-      <div class="match-meta">
-        <div><span>Date:</span> <strong id="matchDate">--</strong></div>
-        <div><span>Venue:</span> <strong id="venueName">--</strong></div>
+      <div class="meta">
+        <div>Date: <strong id="mDate">--</strong></div>
+        <div>Venue: <strong id="mVenue">--</strong></div>
       </div>
     </div>
   </div>
 
-  <!-- Auth Modal (Popup) -->
-  <div id="authModal" class="modal hidden">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h3 id="modalTitle">Sign In</h3>
-      
-      <input type="email" id="authEmail" placeholder="Email Address">
-      <input type="password" id="authPassword" placeholder="Password">
-      
-      <div id="authError" class="error hidden"></div>
-      
-      <button id="authActionBtn">Sign In</button>
-      <p class="toggle-text">
-        <span id="toggleAuthMode">Need an account? Register</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- JavaScript Module for Firebase Auth & Match Tracker -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getAuth, 
-      createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, 
-      signOut, 
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // REPLACE THIS WITH YOUR FIREBASE PROJECT CONFIGURATION
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+    const firebaseConfig = { apiKey: "YOUR_KEY", authDomain: "YOUR_PROJECT.firebaseapp.com", projectId: "YOUR_PROJECT" };
+    const auth = getAuth(initializeApp(firebaseConfig));
+
+    const $ = id => document.getElementById(id);
+    const BADGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="%233a506b" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>';
+    let isSignUp = false;
+
+    // --- NAVIGATION & AUTH ---
+    const showPage = isApp => {
+      $('authPage').classList.toggle('hidden', isApp);
+      $('trackerPage').classList.toggle('hidden', !isApp);
     };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // 1. SELECT DOM ELEMENTS
-    const teamInput = document.getElementById('teamInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const loader = document.getElementById('loader');
-    const errorMsg = document.getElementById('errorMsg');
-
-    const matchDisplay = document.getElementById('matchDisplay');
-    const leagueName = document.getElementById('leagueName');
-    const homeName = document.getElementById('homeName');
-    const homeBadge = document.getElementById('homeBadge');
-    const awayName = document.getElementById('awayName');
-    const awayBadge = document.getElementById('awayBadge');
-    const score = document.getElementById('score');
-    const matchStatus = document.getElementById('matchStatus');
-    const matchDate = document.getElementById('matchDate');
-    const venueName = document.getElementById('venueName');
-
-    // Auth DOM Elements
-    const openAuthBtn = document.getElementById('openAuthBtn');
-    const authModal = document.getElementById('authModal');
-    const closeModal = document.getElementById('closeModal');
-    const authEmail = document.getElementById('authEmail');
-    const authPassword = document.getElementById('authPassword');
-    const authActionBtn = document.getElementById('authActionBtn');
-    const toggleAuthMode = document.getElementById('toggleAuthMode');
-    const modalTitle = document.getElementById('modalTitle');
-    const authError = document.getElementById('authError');
-    
-    const loggedOutState = document.getElementById('loggedOutState');
-    const loggedInState = document.getElementById('loggedInState');
-    const userEmailDisplay = document.getElementById('userEmailDisplay');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    const DEFAULT_BADGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="%233a506b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/></svg>';
-    let isSignUpMode = false;
-
-    // 2. AUTHENTICATION LOGIC
-    openAuthBtn.onclick = () => authModal.classList.remove('hidden');
-    closeModal.onclick = () => authModal.classList.add('hidden');
-
-    toggleAuthMode.onclick = () => {
-      isSignUpMode = !isSignUpMode;
-      modalTitle.textContent = isSignUpMode ? 'Register' : 'Sign In';
-      authActionBtn.textContent = isSignUpMode ? 'Register' : 'Sign In';
-      toggleAuthMode.textContent = isSignUpMode ? 'Already have an account? Sign In' : 'Need an account? Register';
-      authError.classList.add('hidden');
+    $('toggleAuth').onclick = () => {
+      isSignUp = !isSignUp;
+      $('authTitle').textContent = $('authBtn').textContent = isSignUp ? 'Register' : 'Sign In';
+      $('toggleAuth').textContent = isSignUp ? 'Already have an account? Sign In' : 'Need an account? Register';
     };
 
-    authActionBtn.onclick = async () => {
-      const email = authEmail.value.trim();
-      const password = authPassword.value;
-
-      if (!email || !password) return;
-
+    $('authBtn').onclick = async () => {
       try {
-        if (isSignUpMode) {
-          await createUserWithEmailAndPassword(auth, email, password);
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-        }
-        authModal.classList.add('hidden');
-        authEmail.value = '';
-        authPassword.value = '';
-      } catch (err) {
-        authError.textContent = err.message;
-        authError.classList.remove('hidden');
-      }
+        const action = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+        await action(auth, $('email').value.trim(), $('pass').value);
+      } catch (err) { $('authErr').textContent = err.message; $('authErr').classList.remove('hidden'); }
     };
 
-    logoutBtn.onclick = () => signOut(auth);
+    $('guestBtn').onclick = () => showPage(true);
+    $('logoutBtn').onclick = () => signOut(auth);
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loggedOutState.classList.add('hidden');
-        loggedInState.classList.remove('hidden');
-        userEmailDisplay.textContent = user.email;
-      } else {
-        loggedOutState.classList.remove('hidden');
-        loggedInState.classList.add('hidden');
-        userEmailDisplay.textContent = '';
-      }
+    onAuthStateChanged(auth, user => {
+      showPage(!!user);
+      $('userDisp').textContent = user ? user.email : 'Guest';
     });
 
-    // 3. HELPER: Fetch Team Details by Name or ID
-    async function getTeamData(identifier, isId = false) {
-      const param = isId ? `id=${identifier}` : `t=${encodeURIComponent(identifier)}`;
-      const url = `https://www.thesportsdb.com/api/v1/json/3/${isId ? 'lookupteam' : 'searchteams'}.php?${param}`;
-      
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (!data.teams || data.teams.length === 0) {
-        throw new Error(`Team "${identifier}" not found.`);
-      }
-
-      return data.teams[0];
+    // --- FOOTBALL API ---
+    async function api(path) {
+      const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/${path}`);
+      return res.json();
     }
 
-    // 4. HELPER: Get Last Match for Team ID
-    async function getLastMatch(teamId) {
-      const url = `https://www.thesportsdb.com/api/v1/json/3/eventslast.php?id=${teamId}`;
-      
-      const response = await fetch(url);
-      const data = await response.json();
+    async function searchMatch() {
+      const q = $('teamInput').value.trim();
+      if (!q) return;
 
-      if (!data.results || data.results.length === 0) {
-        throw new Error('No recent match data available for this team.');
-      }
-
-      return data.results[0];
-    }
-
-    // 5. MAIN CONTROLLER
-    async function fetchAndRenderMatch() {
-      const query = teamInput.value.trim();
-      if (!query) return;
-
-      // Reset UI State to Loading
-      loader.classList.remove('hidden');
-      errorMsg.classList.add('hidden');
-      matchDisplay.classList.add('hidden');
+      $('loader').classList.remove('hidden');
+      $('trackErr').classList.add('hidden');
+      $('matchDisplay').classList.add('hidden');
 
       try {
-        const searchedTeam = await getTeamData(query);
-        const match = await getLastMatch(searchedTeam.idTeam);
-
-        // Fetch team badges in parallel
-        const [homeTeam, awayTeam] = await Promise.allSettled([
-          getTeamData(match.idHomeTeam, true),
-          getTeamData(match.idAwayTeam, true)
-        ]);
-
-        leagueName.textContent = match.strLeague || 'Friendly / Tournament';
+        const tData = await api(`searchteams.php?t=${encodeURIComponent(q)}`);
+        if (!tData.teams) throw new Error('Team not found');
         
-        homeName.textContent = match.strHomeTeam;
-        homeBadge.src = homeTeam.status === 'fulfilled' ? homeTeam.value.strBadge : DEFAULT_BADGE;
-        
-        awayName.textContent = match.strAwayTeam;
-        awayBadge.src = awayTeam.status === 'fulfilled' ? awayTeam.value.strBadge : DEFAULT_BADGE;
+        const mData = await api(`eventslast.php?id=${tData.teams[0].idTeam}`);
+        if (!mData.results) throw new Error('No recent matches');
+        const m = mData.results[0];
 
-        const homeScore = match.intHomeScore !== null ? match.intHomeScore : '-';
-        const awayScore = match.intAwayScore !== null ? match.intAwayScore : '-';
-        score.textContent = `${homeScore} - ${awayScore}`;
-        
-        matchStatus.textContent = match.strStatus || 'FINISHED';
-        matchDate.textContent = match.dateEvent || '--';
-        venueName.textContent = match.strVenue || searchedTeam.strStadium || 'Unknown Venue';
+        const [h, a] = await Promise.allSettled([api(`lookupteam.php?id=${m.idHomeTeam}`), api(`lookupteam.php?id=${m.idAwayTeam}`)]);
 
-        // Dynamically update document title for SEO on search
-        document.title = `${match.strHomeTeam} vs ${match.strAwayTeam} (${homeScore}-${awayScore}) | Match Tracker`;
+        $('league').textContent = m.strLeague || 'Match';
+        $('hName').textContent = m.strHomeTeam;
+        $('aName').textContent = m.strAwayTeam;
+        $('hBadge').src = h.status === 'fulfilled' && h.value.teams ? h.value.teams[0].strBadge : BADGE;
+        $('aBadge').src = a.status === 'fulfilled' && a.value.teams ? a.value.teams[0].strBadge : BADGE;
+        $('score').textContent = `${m.intHomeScore ?? '-'} - ${m.intAwayScore ?? '-'}`;
+        $('status').textContent = m.strStatus || 'FINISHED';
+        $('mDate').textContent = m.dateEvent || '--';
+        $('mVenue').textContent = m.strVenue || tData.teams[0].strStadium || 'Unknown';
 
-        matchDisplay.classList.remove('hidden');
-      } catch (err) {
-        errorMsg.textContent = err.message;
-        errorMsg.classList.remove('hidden');
-      } finally {
-        loader.classList.add('hidden');
-      }
+        $('matchDisplay').classList.remove('hidden');
+      } catch (e) {
+        $('trackErr').textContent = e.message;
+        $('trackErr').classList.remove('hidden');
+      } finally { $('loader').classList.add('hidden'); }
     }
 
-    // 6. EVENT LISTENERS
-    searchBtn.addEventListener('click', fetchAndRenderMatch);
-    teamInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') fetchAndRenderMatch();
-    });
-
-    // Initial search on load
-    fetchAndRenderMatch();
+    $('searchBtn').onclick = searchMatch;
+    $('teamInput').onkeypress = e => e.key === 'Enter' && searchMatch();
+    searchMatch();
   </script>
 </body>
 </html>
