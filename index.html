@@ -42,10 +42,10 @@
     </div>
     <h2 style="margin:0 0 12px;">⚽ Match Tracker</h2>
     
-    <div class="flex-row">
+    <form id="searchForm" class="flex-row" onsubmit="return false;">
       <input type="text" id="teamInput" value="Arsenal" style="margin:0;">
-      <button id="searchBtn" style="width: auto;">Search</button>
-    </div>
+      <button type="submit" id="searchBtn" style="width: auto;">Search</button>
+    </form>
 
     <div id="loader" class="hidden" style="margin-top:10px;">Searching...</div>
     <div id="trackErr" class="error hidden"></div>
@@ -79,6 +79,7 @@
     const showPage = isApp => {
       $('authPage').classList.toggle('hidden', isApp);
       $('trackerPage').classList.toggle('hidden', !isApp);
+      if (isApp) searchMatch();
     };
 
     $('toggleAuth').onclick = () => {
@@ -121,7 +122,7 @@
         if (!tData.teams) throw new Error('Team not found');
         
         const mData = await api(`eventslast.php?id=${tData.teams[0].idTeam}`);
-        if (!mData.results) throw new Error('No recent matches');
+        if (!mData.results) throw new Error('No recent matches found');
         const m = mData.results[0];
 
         const [h, a] = await Promise.allSettled([api(`lookupteam.php?id=${m.idHomeTeam}`), api(`lookupteam.php?id=${m.idAwayTeam}`)]);
@@ -143,9 +144,7 @@
       } finally { $('loader').classList.add('hidden'); }
     }
 
-    $('searchBtn').onclick = searchMatch;
-    $('teamInput').onkeypress = e => e.key === 'Enter' && searchMatch();
-    searchMatch();
+    $('searchForm').onsubmit = (e) => { e.preventDefault(); searchMatch(); };
   </script>
 </body>
 </html>
